@@ -1,78 +1,83 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import { nanoid } from 'nanoid';
+import { addContact, removeContact, setFilter } from 'Redux/store';
 import ContactForm from 'components/ContactForm/ContactForm';
 import { Filter } from 'components/Filter/Filter';
 import { ContactList } from 'components/ContactList/ContactList';
 import css from 'components/App.module.css';
 
-class App extends Component {
-  state = {
-    contacts: [
-      { id: 'id-1', name: 'Rosie Simpson', number: '459-12-56' },
-      { id: 'id-2', name: 'Hermione Kline', number: '443-89-12' },
-      { id: 'id-3', name: 'Eden Clements', number: '645-17-79' },
-      { id: 'id-4', name: 'Annie Copeland', number: '227-91-26' },
-    ],
-    filter: '',
-  };
+import { useSelector, useDispatch } from 'react-redux/es/exports';
 
-  checkName = filterName => {
-    return this.state.contacts.some(({ name }) => name.toLowerCase() === filterName.toLowerCase());
-  };
+const App = () => {
+  // const [contacts, setContacts] = useState(() => {
+  //   const localStorageTarget = JSON.parse(
+  //     window.localStorage.getItem('contacts')
+  //   );
+  //   return localStorageTarget && localStorageTarget.length > 0
+  //     ? localStorageTarget
+  //     : defaultContacts;
+  // });
+  // const [filter, setFilter] = useState('');
 
-  deleteContact = contactId => {
-    this.setState(prevState => ({
-      contacts: prevState.contacts.filter(contact => contact.id !== contactId),
-    }));
-  };
-  handleAddContact = data => {
-    if (this.checkName(data.name)) {
+  const dispatch = useDispatch();
+  const contacts = useSelector(state => state.contacts);
+  console.log(contacts);
+  const filter = useSelector(state => state.filter);
+  console.log(filter);
+  // const value = useSelector(state => state.myValue);
+
+  // useEffect(() => {
+  //   window.localStorage.setItem('contacts', JSON.stringify(contacts));
+  // }, [contacts]);
+
+  const handleAddContact = data => {
+    if (checkName(data.name)) {
       alert(`${data.name} is already in contacts`);
       return;
     } else {
-      this.setState(prevState => ({
-        contacts: [
-          { id: nanoid(), name: data.name, number: data.number },
-          ...prevState.contacts,
-        ],
-      }));
+      dispatch(
+        addContact({ id: nanoid(), name: data.name, number: data.number })
+      );
     }
   };
 
-  handleFilter = text => {
-    this.setState({ filter: text });
-  };
-
-  getVisiableContacts = () => {
-    return this.state.contacts.filter(({ name }) =>
-      name.toLowerCase().includes(this.state.filter.toLowerCase())
+  const getVisiableContacts = () => {
+    return contacts.filter(({ name }) =>
+      name.toLowerCase().includes(filter.toLowerCase())
     );
   };
+  console.log(getVisiableContacts());
 
-  onChangeFilter = e => {
-    this.setState({ filter: e.currentTarget.value });
+  const deleteContact = contactId => {
+    return dispatch(removeContact(contactId));
   };
 
-  render() {
-    const visiableContact = this.getVisiableContacts();
-    return (
-      <div className={css.app}>
-        <h1>Phonebook</h1>
-        <ContactForm onSubmit={this.handleAddContact} />
+  const checkName = filterName => {
+    const arr = contacts.filter(({ name }) => name === filterName);
+    if (arr.length > 0) {
+      return true;
+    }
+    return false;
+  };
 
-        <h2>Contacts</h2>
+  return (
+    <div className={css.app}>
+      <h1>Phonebook</h1>
+      <ContactForm onSubmit={handleAddContact} />
 
-        <Filter
-          filterValue={this.state.filter}
-          onChange={this.onChangeFilter}
-        />
-        <ContactList
-          contacts={visiableContact}
-          onDeleteContact={this.deleteContact}
-        />
-      </div>
-    );
-  }
-}
+      <h2>Contacts</h2>
+
+      <Filter
+        filterValue={filter}
+        onChange={e => dispatch(setFilter(e.currentTarget.value))}
+      />
+
+      <ContactList
+        contacts={getVisiableContacts()}
+        onDeleteContact={deleteContact}
+      />
+    </div>
+  );
+};
 
 export default App;
