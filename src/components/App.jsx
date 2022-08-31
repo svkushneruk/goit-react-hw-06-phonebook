@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { nanoid } from 'nanoid';
 import { addContact, removeContact, setFilter } from 'Redux/store';
 import ContactForm from 'components/ContactForm/ContactForm';
@@ -20,11 +20,8 @@ const App = () => {
   // const [filter, setFilter] = useState('');
 
   const dispatch = useDispatch();
-  const contacts = useSelector(state => state.contacts);
-  console.log(contacts);
-  const filter = useSelector(state => state.filter);
-  console.log(filter);
-  // const value = useSelector(state => state.myValue);
+  const contacts = useSelector(state => state.contacts.items);
+  const filter = useSelector(state => state.contacts.filter);
 
   // useEffect(() => {
   //   window.localStorage.setItem('contacts', JSON.stringify(contacts));
@@ -46,7 +43,6 @@ const App = () => {
       name.toLowerCase().includes(filter.toLowerCase())
     );
   };
-  console.log(getVisiableContacts());
 
   const deleteContact = contactId => {
     return dispatch(removeContact(contactId));
