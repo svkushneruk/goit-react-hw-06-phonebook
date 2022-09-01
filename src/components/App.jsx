@@ -1,6 +1,6 @@
 import React from 'react';
 import { nanoid } from 'nanoid';
-import { addContact, removeContact, setFilter } from 'Redux/store';
+import { addContact, removeContact, setFilter } from 'Redux/contactsSlice';
 import ContactForm from 'components/ContactForm/ContactForm';
 import { Filter } from 'components/Filter/Filter';
 import { ContactList } from 'components/ContactList/ContactList';
