@@ -9,23 +9,9 @@ import css from 'components/App.module.css';
 import { useSelector, useDispatch } from 'react-redux/es/exports';
 
 const App = () => {
-  // const [contacts, setContacts] = useState(() => {
-  //   const localStorageTarget = JSON.parse(
-  //     window.localStorage.getItem('contacts')
-  //   );
-  //   return localStorageTarget && localStorageTarget.length > 0
-  //     ? localStorageTarget
-  //     : defaultContacts;
-  // });
-  // const [filter, setFilter] = useState('');
-
   const dispatch = useDispatch();
   const contacts = useSelector(state => state.contacts.items);
   const filter = useSelector(state => state.contacts.filter);
-
-  // useEffect(() => {
-  //   window.localStorage.setItem('contacts', JSON.stringify(contacts));
-  // }, [contacts]);
 
   const handleAddContact = data => {
     if (checkName(data.name)) {
